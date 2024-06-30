@@ -1,5 +1,6 @@
 import mlx_whisper
 import sys
+import os
 
 
 def main():
@@ -8,10 +9,16 @@ def main():
         return
 
     speech_file = sys.argv[1]
-    model = "mlx-community/whisper-tiny"  # デフォルトモデル
+    model = "mlx_models/tiny"  # デフォルトモデル
 
     if len(sys.argv) > 2:
         model = sys.argv[2]
+
+    if os.path.exists(model):
+        print(f"ローカルモデル '{model}' を使用します。")
+    else:
+        print(f"警告: ローカルモデル '{model}' が見つかりません。Hugging Faceからダウンロードを試みます。")
+        model = f"mlx-community/whisper-{os.path.basename(model)}"
 
     print(f"モデル {model} を使用して文字起こしを開始します...")
     result = mlx_whisper.transcribe(speech_file, path_or_hf_repo=model)
